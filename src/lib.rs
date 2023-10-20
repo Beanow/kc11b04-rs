@@ -12,9 +12,8 @@ mod map;
 pub use driver::*;
 pub use map::*;
 
-#[cfg_attr(any(feature = "debug", test), derive(Debug))]
-#[cfg_attr(feature = "udebug", derive(ufmt::derive::uDebug))]
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "defmt-0-3", derive(defmt::Format))]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum KC11B04Key {
 	K1 = 1,
 	K2,

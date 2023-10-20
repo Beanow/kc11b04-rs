@@ -4,8 +4,8 @@
 
 use crate::KC11B04Key;
 
-#[cfg_attr(any(feature = "debug", test), derive(Debug))]
-#[cfg_attr(feature = "udebug", derive(ufmt::derive::uDebug))]
+#[cfg_attr(feature = "defmt-0-3", derive(defmt::Format))]
+#[derive(Debug)]
 pub struct KC11B04Map {
 	k1: u16,
 	k2: u16,
