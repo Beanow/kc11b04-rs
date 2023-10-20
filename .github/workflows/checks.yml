@@ -28,8 +28,10 @@ jobs:
         with:
           toolchain: ${{ matrix.rust }}
       - uses: Swatinem/rust-cache@v2
+      # Note: On Rust < 1.68 we don't have the sparse index yet.
+      # And before Rust 1.70 it was not the default. Meaning this fetch can be slow.
+      # Split it into it's own command so it's easy to see when runs are slow because of fetch specifically.
       - run: cargo fetch
-      - run: cargo build
       - run: cargo test
 
   clippy:
