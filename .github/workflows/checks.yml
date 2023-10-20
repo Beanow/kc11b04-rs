@@ -34,8 +34,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
         with:
+          toolchain: stable
           components: clippy
       - run: cargo clippy --all-targets --all-features -- -D warnings
 
@@ -44,7 +45,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
         with:
+          toolchain: stable
           components: rustfmt
       - run: cargo fmt --all -- --check
