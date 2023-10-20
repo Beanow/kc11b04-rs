@@ -1,0 +1,24 @@
+[package]
+name = "kc11b04"
+version = "0.1.0"
+authors = ["Robin van Boven"]
+description = "Driver for the KC11B04 4-button analog keypad"
+repository = "https://github.com/Beanow/kc11b04-rs"
+categories = ["embedded", "hardware-support", "no-std"]
+keywords = ["embedded-hal-driver", "analog", "adc", "keypad", "driver"]
+readme = "README.md"
+license = "MIT OR Apache-2.0"
+edition = "2018"
+
+[features]
+default = []
+debug = []
+udebug = ["dep:ufmt"]
+
+[dependencies]
+embedded-hal = { version = "0.2.7", features = ["unproven"] }
+nb = "1.1"
+ufmt = { version = "0.2", optional = true }
+
+[dev-dependencies]
+embedded-hal-mock = "0.9"
