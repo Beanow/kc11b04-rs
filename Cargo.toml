@@ -1,6 +1,6 @@
 [package]
 name = "kc11b04"
-version = "0.1.0"
+version = "0.0.1"
 authors = ["Robin van Boven"]
 description = "Driver for the KC11B04 4-button analog keypad"
 repository = "https://github.com/Beanow/kc11b04-rs"
