@@ -1,0 +1,43 @@
+name: version or publish
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  version-or-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    outputs:
+      change: ${{ steps.covector.outputs.change }}
+      commandRan: ${{ steps.covector.outputs.commandRan }}
+      successfulPublish: ${{ steps.covector.outputs.successfulPublish }}
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # required for use of git history
+      - name: cargo login
+        run: cargo login ${{ secrets.CRATES_IO_TOKEN }}
+      - name: git config
+        run: |
+          git config --global user.name "${{ github.event.pusher.name }}"
+          git config --global user.email "${{ github.event.pusher.email }}"
+      - name: covector version or publish (publish when no change files present)
+        uses: jbolda/covector/packages/action@covector-v0.10
+        id: covector
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          command: "version-or-publish"
+          createRelease: true
+      - name: Create Pull Request With Versions Bumped
+        id: cpr
+        uses: peter-evans/create-pull-request@18f7dc018cc2cd597073088f7c7591b9d1c02672 # v3
+        if: steps.covector.outputs.commandRan == 'version'
+        with:
+          title: "Publish New Versions"
+          commit-message: "publish new versions"
+          labels: "version updates"
+          branch: "release"
+          body: ${{ steps.covector.outputs.change }}

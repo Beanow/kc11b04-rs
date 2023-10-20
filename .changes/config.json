@@ -1,0 +1,22 @@
+{
+	"gitSiteUrl": "https://github.com/Beanow/kc11b04-rs/",
+	"pkgManagers": {
+		"rust": {
+			"version": true,
+			"getPublishedVersion": "cargo search ${ pkg.pkg } --limit 1 | sed -nE 's/^[^\"]*\"//; s/\".*//1p' -",
+			"publish": [
+				{
+					"command": "cargo publish",
+					"dryRunCommand": "cargo publish --dry-run",
+					"pipe": true
+				}
+			]
+		}
+	},
+	"packages": {
+		"kc11b04": {
+			"path": ".",
+			"manager": "rust"
+		}
+	}
+}
