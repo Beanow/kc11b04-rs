@@ -46,6 +46,21 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - run: cargo clippy --all-targets --all-features -- -D warnings
 
+  readme:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: rust toolchain
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo install cargo-readme
+      - name: check readme is up-to-date
+        run: |
+          cargo readme > README.md
+          git diff --exit-code
+
   fmt:
     runs-on: ubuntu-latest
     steps:
