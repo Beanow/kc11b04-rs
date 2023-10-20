@@ -2,11 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-License-Identifier: MIT
 
-use crate::KC11B04Key;
+use crate::Key;
 
+/// Maps keys to their expected ADC readings.
+///
+/// Note: this depends on the ADC resolution, so you may want to use a constant for this such as [`MAP_10BIT`].
 #[cfg_attr(feature = "defmt-0-3", derive(defmt::Format))]
 #[derive(Debug)]
-pub struct KC11B04Map {
+pub struct KeyMap {
 	k1: u16,
 	k2: u16,
 	k3: u16,
@@ -14,13 +17,16 @@ pub struct KC11B04Map {
 	margin: u16,
 }
 
-impl KC11B04Map {
-	pub const fn key_from_reading(&self, val: u16) -> Option<KC11B04Key> {
+impl KeyMap {
+	/// Takes an ADC reading and finds whether it's in the expected range of a key.
+	///
+	/// Will be [`None`] when no key is pressed, but also for some simultaneous key combinations.
+	pub const fn key_from_reading(&self, val: u16) -> Option<Key> {
 		match val {
-			v if v > self.k1 - self.margin && v < self.k1 + self.margin => Some(KC11B04Key::K1),
-			v if v > self.k2 - self.margin && v < self.k2 + self.margin => Some(KC11B04Key::K2),
-			v if v > self.k3 - self.margin && v < self.k3 + self.margin => Some(KC11B04Key::K3),
-			v if v > self.k4 - self.margin => Some(KC11B04Key::K4),
+			v if v > self.k1 - self.margin && v < self.k1 + self.margin => Some(Key::K1),
+			v if v > self.k2 - self.margin && v < self.k2 + self.margin => Some(Key::K2),
+			v if v > self.k3 - self.margin && v < self.k3 + self.margin => Some(Key::K3),
+			v if v > self.k4 - self.margin => Some(Key::K4),
 			_ => None,
 		}
 	}
@@ -38,10 +44,11 @@ const K1_F: f32 = 0.3952569;
 const K2_F: f32 = 0.5928853;
 const K3_F: f32 = 0.7936507;
 
-pub const KC11B04_10BIT: KC11B04Map = {
+/// [`KeyMap`] for 10bit ADCs with a maximum reading of `1023`.
+pub const MAP_10BIT: KeyMap = {
 	let max = 1023;
 	let margin = 0.03;
-	KC11B04Map {
+	KeyMap {
 		k1: (max as f32 * K1_F) as u16,
 		k2: (max as f32 * K2_F) as u16,
 		k3: (max as f32 * K3_F) as u16,
@@ -52,7 +59,7 @@ pub const KC11B04_10BIT: KC11B04Map = {
 
 #[test]
 fn read_10bit_samples() {
-	let map = KC11B04_10BIT;
+	let map = MAP_10BIT;
 	assert_eq!(
 		(
 			map.key_from_reading(0),
@@ -68,13 +75,13 @@ fn read_10bit_samples() {
 		(
 			None,
 			None,
-			Some(KC11B04Key::K1),
+			Some(Key::K1),
 			None,
-			Some(KC11B04Key::K2),
+			Some(Key::K2),
 			None,
-			Some(KC11B04Key::K3),
+			Some(Key::K3),
 			None,
-			Some(KC11B04Key::K4)
+			Some(Key::K4)
 		)
 	);
 }

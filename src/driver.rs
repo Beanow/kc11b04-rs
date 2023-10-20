@@ -5,21 +5,25 @@
 use core::marker::PhantomData;
 use embedded_hal::adc::{Channel, OneShot};
 
-use crate::{KC11B04Key, KC11B04Map};
+use crate::{Key, KeyMap};
 
-type Error<Adc, ADC, Word, Pin> = nb::Error<<Adc as OneShot<ADC, Word, Pin>>::Error>;
-
+/// KC11B04 analog keypad driver
 pub struct KC11B04<Pin, ADC> {
 	pin: Pin,
-	map: &'static KC11B04Map,
+	map: &'static KeyMap,
 	_adc: PhantomData<ADC>,
 }
+
+type Error<Adc, ADC, Word, Pin> = nb::Error<<Adc as OneShot<ADC, Word, Pin>>::Error>;
 
 impl<Pin, ADC> KC11B04<Pin, ADC>
 where
 	Pin: Channel<ADC>,
 {
-	pub fn new(pin: Pin, map: &'static KC11B04Map) -> Self
+	/// Create a [`KC11B04`] instance for the given ADC pin / channel and mapping.
+	///
+	/// The mapping depends on the resolution of your ADC.
+	pub fn new(pin: Pin, map: &'static KeyMap) -> Self
 	where
 		Pin: Channel<ADC>,
 	{
@@ -30,10 +34,13 @@ where
 		}
 	}
 
+	/// Takes an ADC reading and finds whether a key is currently being pressed.
+	///
+	/// Will be [`None`] when no key is pressed, but also for some simultaneous key combinations.
 	pub fn key_state<Adc>(
 		&mut self,
 		adc: &mut Adc,
-	) -> Result<Option<KC11B04Key>, Error<Adc, ADC, u16, Pin>>
+	) -> Result<Option<Key>, Error<Adc, ADC, u16, Pin>>
 	where
 		Adc: OneShot<ADC, u16, Pin>,
 	{
@@ -44,7 +51,7 @@ where
 
 #[cfg(test)]
 mod test {
-	use crate::{KC11B04Key, KC11B04, KC11B04_10BIT};
+	use crate::{Key, KC11B04, MAP_10BIT};
 	use embedded_hal::adc::Channel;
 	use embedded_hal_mock::adc::{Mock, MockChan0, Transaction};
 
@@ -61,7 +68,7 @@ mod test {
 		];
 
 		let mut adc = Mock::new(&expected);
-		let mut keypad = KC11B04::new(PIN, &KC11B04_10BIT);
+		let mut keypad = KC11B04::new(PIN, &MAP_10BIT);
 
 		assert_eq!(
 			(
@@ -73,10 +80,10 @@ mod test {
 			),
 			(
 				Ok(None),
-				Ok(Some(KC11B04Key::K4)),
-				Ok(Some(KC11B04Key::K3)),
-				Ok(Some(KC11B04Key::K2)),
-				Ok(Some(KC11B04Key::K1))
+				Ok(Some(Key::K4)),
+				Ok(Some(Key::K3)),
+				Ok(Some(Key::K2)),
+				Ok(Some(Key::K1))
 			)
 		);
 	}
