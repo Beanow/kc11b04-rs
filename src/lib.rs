@@ -29,6 +29,7 @@ pub use map::*;
 
 /// A named key on the [KC11B04][crate] module.
 #[cfg_attr(feature = "defmt-0-3", derive(defmt::Format))]
+#[cfg_attr(feature = "ufmt-0-2", derive(ufmt::derive::uDebug))]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Key {
 	/// `K1` key on the [KC11B04][crate] module.

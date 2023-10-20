@@ -8,6 +8,7 @@ use crate::Key;
 ///
 /// Note: this depends on the ADC resolution, so you may want to use a constant for this such as [`MAP_10BIT`].
 #[cfg_attr(feature = "defmt-0-3", derive(defmt::Format))]
+#[cfg_attr(feature = "ufmt-0-2", derive(ufmt::derive::uDebug))]
 #[derive(Debug)]
 pub struct KeyMap {
 	k1: u16,
@@ -44,9 +45,48 @@ const K1_F: f32 = 0.3952569;
 const K2_F: f32 = 0.5928853;
 const K3_F: f32 = 0.7936507;
 
+/// [`KeyMap`] for 8bit ADCs with a maximum reading of `255`.
+pub const MAP_8BIT: KeyMap = {
+	let max = 255;
+	let margin = 0.03;
+	KeyMap {
+		k1: (max as f32 * K1_F) as u16,
+		k2: (max as f32 * K2_F) as u16,
+		k3: (max as f32 * K3_F) as u16,
+		k4: max,
+		margin: (max as f32 * margin) as u16,
+	}
+};
+
 /// [`KeyMap`] for 10bit ADCs with a maximum reading of `1023`.
 pub const MAP_10BIT: KeyMap = {
 	let max = 1023;
+	let margin = 0.03;
+	KeyMap {
+		k1: (max as f32 * K1_F) as u16,
+		k2: (max as f32 * K2_F) as u16,
+		k3: (max as f32 * K3_F) as u16,
+		k4: max,
+		margin: (max as f32 * margin) as u16,
+	}
+};
+
+/// [`KeyMap`] for 12bit ADCs with a maximum reading of `4095`.
+pub const MAP_12BIT: KeyMap = {
+	let max = 4095;
+	let margin = 0.03;
+	KeyMap {
+		k1: (max as f32 * K1_F) as u16,
+		k2: (max as f32 * K2_F) as u16,
+		k3: (max as f32 * K3_F) as u16,
+		k4: max,
+		margin: (max as f32 * margin) as u16,
+	}
+};
+
+/// [`KeyMap`] for 16bit ADCs with a maximum reading of `65535`.
+pub const MAP_16BIT: KeyMap = {
+	let max = 65535;
 	let margin = 0.03;
 	KeyMap {
 		k1: (max as f32 * K1_F) as u16,

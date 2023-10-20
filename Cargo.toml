@@ -21,12 +21,15 @@ include = [
 
 [features]
 default = []
+ufmt-0-2 = ["dep:ufmt"]
 defmt-0-3 = ["dep:defmt"]
 
 [dependencies]
 embedded-hal = { version = "0.2.7", features = ["unproven"] }
 nb = "1.1"
+
 defmt = { version = "0.3", optional = true }
+ufmt = { version = "0.2", optional = true }
 
 [dev-dependencies]
 embedded-hal-mock = "0.9"
