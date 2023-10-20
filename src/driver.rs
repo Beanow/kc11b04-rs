@@ -10,7 +10,7 @@ use crate::{Key, KeyMap};
 /// KC11B04 analog keypad driver
 pub struct KC11B04<Pin, ADC> {
 	pin: Pin,
-	map: &'static KeyMap,
+	map: KeyMap,
 	_adc: PhantomData<ADC>,
 }
 
@@ -23,7 +23,7 @@ where
 	/// Create a [`KC11B04`] instance for the given ADC pin / channel and mapping.
 	///
 	/// The mapping depends on the resolution of your ADC.
-	pub fn new(pin: Pin, map: &'static KeyMap) -> Self
+	pub fn new(pin: Pin, map: KeyMap) -> Self
 	where
 		Pin: Channel<ADC>,
 	{
@@ -68,7 +68,7 @@ mod test {
 		];
 
 		let mut adc = Mock::new(&expected);
-		let mut keypad = KC11B04::new(PIN, &MAP_10BIT);
+		let mut keypad = KC11B04::new(PIN, MAP_10BIT);
 
 		assert_eq!(
 			(
