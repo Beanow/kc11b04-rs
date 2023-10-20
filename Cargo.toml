@@ -10,6 +10,14 @@ readme = "README.md"
 license = "MIT OR Apache-2.0"
 edition = "2021"
 rust-version = "1.60.0"
+include = [
+	"/**/*.rs",
+	"/Cargo.toml",
+	"/README.md",
+	"/CHANGELOG.md",
+	"/LICENSE-MIT",
+	"/LICENSE-APACHE",
+]
 
 [features]
 default = []
