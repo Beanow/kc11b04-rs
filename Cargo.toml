@@ -1,33 +1,32 @@
 [package]
 name = "kc11b04"
 version = "0.0.1"
-authors = ["Robin van Boven"]
+authors = [ "Robin van Boven" ]
 description = "Driver for the KC11B04 4-button analog keypad"
 repository = "https://github.com/Beanow/kc11b04-rs"
-categories = ["embedded", "hardware-support", "no-std"]
-keywords = ["embedded-hal-driver", "analog", "adc", "keypad", "driver"]
+categories = [ "embedded", "hardware-support", "no-std" ]
+keywords = [ "embedded-hal-driver", "analog", "adc", "keypad", "driver" ]
 readme = "README.md"
 license = "MIT OR Apache-2.0"
 edition = "2021"
 rust-version = "1.60.0"
 include = [
-	"/**/*.rs",
-	"/Cargo.toml",
-	"/README.md",
-	"/CHANGELOG.md",
-	"/LICENSE-MIT",
-	"/LICENSE-APACHE",
+  "/**/*.rs",
+  "/Cargo.toml",
+  "/README.md",
+  "/CHANGELOG.md",
+  "/LICENSE-MIT",
+  "/LICENSE-APACHE"
 ]
 
 [features]
-default = []
-ufmt-0-2 = ["dep:ufmt"]
-defmt-0-3 = ["dep:defmt"]
+default = [ ]
+ufmt-0-2 = [ "dep:ufmt" ]
+defmt-0-3 = [ "dep:defmt" ]
 
 [dependencies]
-embedded-hal = { version = "0.2.7", features = ["unproven"] }
+embedded-hal = { version = "0.2.7", features = [ "unproven" ] }
 nb = "1.1"
-
 defmt = { version = "0.3", optional = true }
 ufmt = { version = "0.2", optional = true }
 
