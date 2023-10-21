@@ -4,11 +4,14 @@
 
 #![deny(unsafe_code)]
 #![deny(missing_docs)]
+#![allow(clippy::tabs_in_doc_comments)]
 #![no_std]
 
 //! Driver in Rust for the KC11B04 4-button analog keypad.
 //!
 //! A 3-pin module using a voltage divider circuit and analog pin to sense a key press.
+//!
+//! ![KC11B04 image][kc11b04-image]
 //!
 //! # Wiring notes
 //!
@@ -49,7 +52,17 @@
 //!
 //! # MSRV & Stability
 //!
-//! This crate compiles on stable Rust `1.60` and up. It _might_ still work on older rust versions, but this isn't ensured. Upgrading the MSRV is considered SemVer breaking.
+//! This crate compiles on stable Rust `1.60` and up. It _might_ still work on older rust versions,
+//! but this isn't ensured. Upgrading the MSRV is considered SemVer breaking.
+//!
+#![cfg_attr(
+	feature = "doc-images",
+	doc = ::embed_doc_image::embed_image!("kc11b04-image", "docs/KC11B04.webp")
+)]
+#![cfg_attr(
+	not(feature = "doc-images"),
+	doc = "[kc11b04-image]: docs/KC11B04.webp"
+)]
 
 mod driver;
 mod map;
