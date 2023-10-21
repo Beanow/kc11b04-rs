@@ -6,3 +6,4 @@
 [docs]: https://docs.rs/{{crate}}
 
 {{readme}}
+{{links}}

@@ -21,6 +21,7 @@ include = [
 
 [features]
 default = [ ]
+doc-images = [ "dep:embed-doc-image" ]
 ufmt-0-2 = [ "dep:ufmt" ]
 defmt-0-3 = [ "dep:defmt" ]
 
@@ -28,7 +29,13 @@ defmt-0-3 = [ "dep:defmt" ]
 embedded-hal = { version = "0.2.7", features = [ "unproven" ] }
 nb = "1.1"
 defmt = { version = "0.3", optional = true }
+embed-doc-image = { version = "0.1", optional = true }
 ufmt = { version = "0.2", optional = true }
 
 [dev-dependencies]
 embedded-hal-mock = "0.9"
+
+# See https://docs.rs/about/metadata
+[package.metadata.docs.rs]
+# Make sure we inline images with `embed-doc-image`
+features = ["doc-images"]
