@@ -65,10 +65,10 @@
 )]
 
 mod driver;
-mod map;
+mod mapping;
 
 pub use driver::*;
-pub use map::*;
+pub use mapping::*;
 
 /// A named key on the [KC11B04][crate] module.
 #[cfg_attr(feature = "defmt-0-3", derive(defmt::Format))]
