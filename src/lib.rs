@@ -65,7 +65,7 @@
 )]
 
 mod driver;
-mod mapping;
+pub mod mapping;
 
 pub use driver::*;
 pub use mapping::*;

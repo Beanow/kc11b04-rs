@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-License-Identifier: MIT
 
+//! TODO: module docs
+
 use crate::Key;
 
 /// Maps keys to their expected ADC readings.
@@ -85,57 +87,49 @@ pub const K2_F: f32 = make_factor!(2000.0, 3000.0, R_DOWN);
 /// See the module documentation [`kc11b04::mapping`][crate::mapping] for details.
 pub const K3_F: f32 = make_factor!(1000.0, 4000.0, R_DOWN);
 
+/// Defines a [`KeyMap`] based on the max reading of the ADC and optional margin factor.<br>
+///	For example `map_from_max!(1023, 0.15)` for a 10bit ADC and 15% margin.
+///
+/// The margin defaults to `0.03` (3%) if omitted.
+///
+/// ## Performance note
+///
+/// This macro will use floating point math. It's strongly recommended to
+/// **declare the result as a constant**, to avoid this FP math at runtime.
+///
+/// ```rust
+/// use kc11b04::{KeyMap, map_from_max};
+///
+/// /// 10bit map, but with 15% margin.
+/// const CUSTOM_MAP: KeyMap = map_from_max!(1023, 0.15);
+/// ```
+#[macro_export]
+macro_rules! map_from_max {
+	($max:literal) => {
+		map_from_max!($max, 0.03)
+	};
+	($max:literal, $margin:literal) => {
+		KeyMap {
+			k1: ($max as f32 * $crate::mapping::K1_F) as u16,
+			k2: ($max as f32 * $crate::mapping::K2_F) as u16,
+			k3: ($max as f32 * $crate::mapping::K3_F) as u16,
+			k4: $max,
+			margin: ($max as f32 * $margin) as u16,
+		}
+	};
+}
+
 /// [`KeyMap`] for 8bit ADCs with a maximum reading of `255`.
-pub const MAP_8BIT: KeyMap = {
-	let max = 255;
-	let margin = 0.03;
-	KeyMap {
-		k1: (max as f32 * K1_F) as u16,
-		k2: (max as f32 * K2_F) as u16,
-		k3: (max as f32 * K3_F) as u16,
-		k4: max,
-		margin: (max as f32 * margin) as u16,
-	}
-};
+pub const MAP_8BIT: KeyMap = map_from_max!(255);
 
 /// [`KeyMap`] for 10bit ADCs with a maximum reading of `1023`.
-pub const MAP_10BIT: KeyMap = {
-	let max = 1023;
-	let margin = 0.03;
-	KeyMap {
-		k1: (max as f32 * K1_F) as u16,
-		k2: (max as f32 * K2_F) as u16,
-		k3: (max as f32 * K3_F) as u16,
-		k4: max,
-		margin: (max as f32 * margin) as u16,
-	}
-};
+pub const MAP_10BIT: KeyMap = map_from_max!(1023);
 
 /// [`KeyMap`] for 12bit ADCs with a maximum reading of `4095`.
-pub const MAP_12BIT: KeyMap = {
-	let max = 4095;
-	let margin = 0.03;
-	KeyMap {
-		k1: (max as f32 * K1_F) as u16,
-		k2: (max as f32 * K2_F) as u16,
-		k3: (max as f32 * K3_F) as u16,
-		k4: max,
-		margin: (max as f32 * margin) as u16,
-	}
-};
+pub const MAP_12BIT: KeyMap = map_from_max!(4095);
 
 /// [`KeyMap`] for 16bit ADCs with a maximum reading of `65535`.
-pub const MAP_16BIT: KeyMap = {
-	let max = 65535;
-	let margin = 0.03;
-	KeyMap {
-		k1: (max as f32 * K1_F) as u16,
-		k2: (max as f32 * K2_F) as u16,
-		k3: (max as f32 * K3_F) as u16,
-		k4: max,
-		margin: (max as f32 * margin) as u16,
-	}
-};
+pub const MAP_16BIT: KeyMap = map_from_max!(65535);
 
 #[test]
 fn read_10bit_samples() {
