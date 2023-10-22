@@ -1,6 +1,6 @@
 [package]
 name = "kc11b04"
-version = "0.1.0"
+version = "0.2.0"
 authors = [ "Robin van Boven" ]
 description = "Driver for the KC11B04 4-button analog keypad"
 repository = "https://github.com/Beanow/kc11b04-rs"
@@ -19,6 +19,11 @@ include = [
   "/LICENSE-APACHE"
 ]
 
+# See https://docs.rs/about/metadata
+[package.metadata.docs.rs]
+# Make sure we inline images with `embed-doc-image`
+features = [ "doc-images" ]
+
 [features]
 default = [ ]
 doc-images = [ "dep:embed-doc-image" ]
@@ -34,8 +39,3 @@ ufmt = { version = "0.2", optional = true }
 
 [dev-dependencies]
 embedded-hal-mock = "0.9"
-
-# See https://docs.rs/about/metadata
-[package.metadata.docs.rs]
-# Make sure we inline images with `embed-doc-image`
-features = ["doc-images"]
