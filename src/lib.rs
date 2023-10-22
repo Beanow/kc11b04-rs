@@ -84,3 +84,15 @@ pub enum Key {
 	/// `K4` key on the [KC11B04][crate] module.
 	K4,
 }
+
+/// [`KeyMap`] for 8bit ADCs with a maximum reading of `255`.
+pub const MAP_8BIT: KeyMap = map_from_max!(255);
+
+/// [`KeyMap`] for 10bit ADCs with a maximum reading of `1023`.
+pub const MAP_10BIT: KeyMap = map_from_max!(1023);
+
+/// [`KeyMap`] for 12bit ADCs with a maximum reading of `4095`.
+pub const MAP_12BIT: KeyMap = map_from_max!(4095);
+
+/// [`KeyMap`] for 16bit ADCs with a maximum reading of `65535`.
+pub const MAP_16BIT: KeyMap = map_from_max!(65535);

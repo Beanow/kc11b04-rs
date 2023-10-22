@@ -119,21 +119,9 @@ macro_rules! map_from_max {
 	};
 }
 
-/// [`KeyMap`] for 8bit ADCs with a maximum reading of `255`.
-pub const MAP_8BIT: KeyMap = map_from_max!(255);
-
-/// [`KeyMap`] for 10bit ADCs with a maximum reading of `1023`.
-pub const MAP_10BIT: KeyMap = map_from_max!(1023);
-
-/// [`KeyMap`] for 12bit ADCs with a maximum reading of `4095`.
-pub const MAP_12BIT: KeyMap = map_from_max!(4095);
-
-/// [`KeyMap`] for 16bit ADCs with a maximum reading of `65535`.
-pub const MAP_16BIT: KeyMap = map_from_max!(65535);
-
 #[test]
 fn read_10bit_samples() {
-	let map = MAP_10BIT;
+	let map = crate::map_from_max!(1023, 0.03);
 	assert_eq!(
 		(
 			map.key_from_reading(0),
