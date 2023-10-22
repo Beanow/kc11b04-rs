@@ -41,9 +41,31 @@ impl KeyMap {
 	K3 = 1000 : ~3846 ... 1/((1/4000) + (1/100000))
 	K4 = 0 : 100K
 */
-const K1_F: f32 = 0.3952569;
-const K2_F: f32 = 0.5928853;
-const K3_F: f32 = 0.7936507;
+
+/// Pull-down resistor value 100K ohms.
+const R_DOWN: f32 = 100_000.0;
+
+macro_rules! make_factor {
+	($r1:literal, $r_rest:literal, $r_down:ident) => {{
+		let r2 = 1.0 / ((1.0 / $r_rest) + (1.0 / $r_down));
+		r2 / ($r1 + r2)
+	}};
+}
+
+/// Relative factor for K1 button, `~39.5%` of the ADC's max reading.
+///
+/// See the module documentation [`kc11b04::mapping`][crate::mapping] for details.
+pub const K1_F: f32 = make_factor!(3000.0, 2000.0, R_DOWN);
+
+/// Relative factor for K2 button, `~59.3%` of the ADC's max reading.
+///
+/// See the module documentation [`kc11b04::mapping`][crate::mapping] for details.
+pub const K2_F: f32 = make_factor!(2000.0, 3000.0, R_DOWN);
+
+/// Relative factor for K3 button, `~79.4%` of the ADC's max reading.
+///
+/// See the module documentation [`kc11b04::mapping`][crate::mapping] for details.
+pub const K3_F: f32 = make_factor!(1000.0, 4000.0, R_DOWN);
 
 /// [`KeyMap`] for 8bit ADCs with a maximum reading of `255`.
 pub const MAP_8BIT: KeyMap = {
