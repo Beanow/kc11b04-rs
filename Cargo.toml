@@ -20,7 +20,9 @@ include = [
   "/LICENSE-APACHE"
 ]
 
+# See https://docs.rs/about/metadata
 [package.metadata.docs.rs]
+# Make sure we inline images with `embed-doc-image`
 features = [ "doc-images" ]
 
 [features]
