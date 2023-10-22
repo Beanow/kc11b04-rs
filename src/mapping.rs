@@ -6,16 +6,34 @@ use crate::Key;
 
 /// Maps keys to their expected ADC readings.
 ///
-/// Note: this depends on the ADC resolution, so you may want to use a constant for this such as [`MAP_10BIT`].
+/// This depends on the ADC resolution, so you may want to use a constant for this such as [`MAP_10BIT`][crate::MAP_10BIT].
 #[cfg_attr(feature = "defmt-0-3", derive(defmt::Format))]
 #[cfg_attr(feature = "ufmt-0-2", derive(ufmt::derive::uDebug))]
 #[derive(Debug)]
 pub struct KeyMap {
-	k1: u16,
-	k2: u16,
-	k3: u16,
-	k4: u16,
-	margin: u16,
+	/// The expected ADC reading for K1, before margins.
+	///
+	/// For predefined maps it's [`K1_F`] times the max reading of the ADC.
+	pub k1: u16,
+
+	/// The expected ADC reading for K2, before margins.
+	///
+	/// For predefined maps it's [`K2_F`] times the max reading of the ADC.
+	pub k2: u16,
+
+	/// The expected ADC reading for K3, before margins.
+	///
+	/// For predefined maps it's [`K3_F`] times the max reading of the ADC.
+	pub k3: u16,
+
+	/// The expected ADC reading for K4, before margins.
+	///
+	/// For predefined maps it's equal to the max reading of the ADC.
+	pub k4: u16,
+
+	/// The absolute margin a reading may deviate from the above expected values.
+	/// The default is `3%` of the max reading of the ADC.
+	pub margin: u16,
 }
 
 impl KeyMap {
