@@ -23,30 +23,26 @@ For example the default on an Arduino Uno is that it matches the operating volta
 
 
 ```rust
-use embedded_hal_mock::adc::*;
 use kc11b04::{Key, KC11B04, MAP_10BIT};
 
-// Configure your ADC and PIN using the HAL for your ADC.
-let mut adc = Mock::new(&[Transaction::read(0, 1023)]);
-let pin = MockChan0;
+let mut adc = /* Configure your ADC using its HAL */
+let mut ad_pin = /* Set the pin connected to AD as analog input */
 
 // Create the keypad driver. Taking ownership of the pin,
 // providing a map that matches the resolution of your ADC.
-let mut keypad = KC11B04::new(pin, MAP_10BIT);
+let mut keypad = KC11B04::new(ad_pin, MAP_10BIT);
 
-// -- somewhere within `loop` --
+// Somewhere within loop { }
+// Read current key state.
+match keypad
+	.key_state(&mut adc)
+	.expect("Problem reading ADC channel")
 {
-	// Read current key state.
-	match keypad
-		.key_state(&mut adc)
-		.expect("Problem reading ADC channel")
-	{
-		Some(Key::K4) => { /* K4 key being pressed */ }
-		Some(Key::K3) => { /* K3 key being pressed */ }
-		Some(Key::K2) => { /* K2 key being pressed */ }
-		Some(Key::K1) => { /* K1 key being pressed */ }
-		None => { /* Either nothing, or multiple keys pressed */ }
-	}
+	Some(Key::K4) => { /* K4 key being pressed */ }
+	Some(Key::K3) => { /* K3 key being pressed */ }
+	Some(Key::K2) => { /* K2 key being pressed */ }
+	Some(Key::K1) => { /* K1 key being pressed */ }
+	None => { /* Either nothing, or multiple keys pressed */ }
 }
 ```
 

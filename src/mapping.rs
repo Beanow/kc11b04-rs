@@ -188,7 +188,7 @@ pub const K2_F: f32 = make_factor!(2000.0, 3000.0, R_DOWN);
 pub const K3_F: f32 = make_factor!(1000.0, 4000.0, R_DOWN);
 
 /// Defines a [`KeyMap`] based on the max reading of the ADC and optional margin factor.<br>
-///	For example `map_from_max!(1023, 0.15)` for a 10bit ADC and 15% margin.
+/// For example `map_from_max!(1023, 0.15)` for a 10bit ADC and 15% margin.
 ///
 /// The margin defaults to `0.03` (3%) if omitted.
 ///
