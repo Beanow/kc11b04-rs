@@ -7,7 +7,7 @@ use embedded_hal::adc::{Channel, OneShot};
 
 use crate::{Key, KeyMap};
 
-/// KC11B04 analog keypad driver
+/// KC11B04 analog keypad driver. Constructed with [`KC11B04::new`].
 pub struct KC11B04<Pin, ADC> {
 	pin: Pin,
 	map: KeyMap,
@@ -22,7 +22,17 @@ where
 {
 	/// Create a [`KC11B04`] instance for the given ADC pin / channel and mapping.
 	///
-	/// The mapping depends on the resolution of your ADC.
+	/// ```rust
+	/// # use embedded_hal_mock::adc::*;
+	/// # use kc11b04::{Key, KC11B04};
+	/// #
+	/// # let mut adc = Mock::new(&[Transaction::read(0, 1023)]);
+	/// # let analog_pin = MockChan0;
+	/// #
+	/// // Create the keypad driver. Taking ownership of the pin,
+	/// // providing a map that matches the resolution of your ADC.
+	/// let mut keypad = KC11B04::new(analog_pin, kc11b04::MAP_10BIT);
+	/// ```
 	pub fn new(pin: Pin, map: KeyMap) -> Self
 	where
 		Pin: Channel<ADC>,
