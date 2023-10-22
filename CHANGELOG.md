@@ -1,5 +1,9 @@
 # Changelog
 
+## \[0.2.1]
+
+- [`4e15e28`](https://github.com/Beanow/kc11b04-rs/commit/4e15e28d236994c1513c84216757c8fb67829806)([#8](https://github.com/Beanow/kc11b04-rs/pull/8)) Include doc images in package which should fix docs.rs builds.
+
 ## \[0.2.0]
 
 - [`1c3c5f5`](https://github.com/Beanow/kc11b04-rs/commit/1c3c5f512f2a8e6f637012ffdbd6742b213cc888)([#7](https://github.com/Beanow/kc11b04-rs/pull/7)) Custom maps can now be created.
