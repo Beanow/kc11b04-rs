@@ -23,30 +23,29 @@
 //! # Example
 //!
 //! ```rust
-//! use embedded_hal_mock::adc::*;
+//! # use embedded_hal_mock::adc::*;
 //! use kc11b04::{Key, KC11B04, MAP_10BIT};
 //!
-//! // Configure your ADC and PIN using the HAL for your ADC.
-//! let mut adc = Mock::new(&[Transaction::read(0, 1023)]);
-//! let pin = MockChan0;
+//! let mut adc = /* Configure your ADC using its HAL */
+//! # Mock::new(&[Transaction::read(0, 1023)]);
+//! let mut ad_pin = /* Set the pin connected to AD as analog input */
+//! # MockChan0;
 //!
 //! // Create the keypad driver. Taking ownership of the pin,
 //! // providing a map that matches the resolution of your ADC.
-//! let mut keypad = KC11B04::new(pin, MAP_10BIT);
+//! let mut keypad = KC11B04::new(ad_pin, MAP_10BIT);
 //!
-//! // -- somewhere within `loop` --
+//! // Somewhere within loop { }
+//! // Read current key state.
+//! match keypad
+//! 	.key_state(&mut adc)
+//! 	.expect("Problem reading ADC channel")
 //! {
-//! 	// Read current key state.
-//! 	match keypad
-//! 		.key_state(&mut adc)
-//! 		.expect("Problem reading ADC channel")
-//! 	{
-//! 		Some(Key::K4) => { /* K4 key being pressed */ }
-//! 		Some(Key::K3) => { /* K3 key being pressed */ }
-//! 		Some(Key::K2) => { /* K2 key being pressed */ }
-//! 		Some(Key::K1) => { /* K1 key being pressed */ }
-//! 		None => { /* Either nothing, or multiple keys pressed */ }
-//! 	}
+//! 	Some(Key::K4) => { /* K4 key being pressed */ }
+//! 	Some(Key::K3) => { /* K3 key being pressed */ }
+//! 	Some(Key::K2) => { /* K2 key being pressed */ }
+//! 	Some(Key::K1) => { /* K1 key being pressed */ }
+//! 	None => { /* Either nothing, or multiple keys pressed */ }
 //! }
 //! ```
 //!
@@ -65,10 +64,10 @@
 )]
 
 mod driver;
-mod map;
+pub mod mapping;
 
 pub use driver::*;
-pub use map::*;
+pub use mapping::KeyMap;
 
 /// A named key on the [KC11B04][crate] module.
 #[cfg_attr(feature = "defmt-0-3", derive(defmt::Format))]
@@ -84,3 +83,15 @@ pub enum Key {
 	/// `K4` key on the [KC11B04][crate] module.
 	K4,
 }
+
+/// [`KeyMap`] for 8bit ADCs with a maximum reading of `255`.
+pub const MAP_8BIT: KeyMap = map_from_max!(255);
+
+/// [`KeyMap`] for 10bit ADCs with a maximum reading of `1023`.
+pub const MAP_10BIT: KeyMap = map_from_max!(1023);
+
+/// [`KeyMap`] for 12bit ADCs with a maximum reading of `4095`.
+pub const MAP_12BIT: KeyMap = map_from_max!(4095);
+
+/// [`KeyMap`] for 16bit ADCs with a maximum reading of `65535`.
+pub const MAP_16BIT: KeyMap = map_from_max!(65535);
