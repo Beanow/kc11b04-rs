@@ -38,7 +38,7 @@
 //!
 //! // Floating point math is supported in constant definitions.
 //! // And should "compile away" into just the final integers.
-//! const CUSTOM_MAP: KeyMap = {
+//! const CUSTOM_MAP: KeyMap<u16> = {
 //! 	use kc11b04::mapping::{K1_F, K2_F, K3_F};
 //! 	let max = 1023;
 //! 	let margin = 0.03;
@@ -58,7 +58,7 @@
 //! use kc11b04::{KeyMap, map_from_max};
 //!
 //! /// 10bit map, but with 15% margin.
-//! const CUSTOM_MAP: KeyMap = map_from_max!(1023, 0.15);
+//! const CUSTOM_MAP: KeyMap<u16> = map_from_max!(u16, 1023, 0.15);
 //! ```
 //!
 //! ## Schematic and factors
@@ -111,6 +111,8 @@
 	doc = "[kc11b04-schema]: docs/KC11B04-schema.svg"
 )]
 
+use core::ops::{Add, Sub};
+
 use crate::Key;
 
 /// Maps keys to their expected ADC readings.
@@ -121,37 +123,40 @@ use crate::Key;
 #[cfg_attr(feature = "defmt-0-3", derive(defmt::Format))]
 #[cfg_attr(feature = "ufmt-0-2", derive(ufmt::derive::uDebug))]
 #[derive(Debug)]
-pub struct KeyMap {
+pub struct KeyMap<Word> {
 	/// The expected ADC reading for K1, before margins.
 	///
 	/// For predefined maps it's [`K1_F`] times the max reading of the ADC.
-	pub k1: u16,
+	pub k1: Word,
 
 	/// The expected ADC reading for K2, before margins.
 	///
 	/// For predefined maps it's [`K2_F`] times the max reading of the ADC.
-	pub k2: u16,
+	pub k2: Word,
 
 	/// The expected ADC reading for K3, before margins.
 	///
 	/// For predefined maps it's [`K3_F`] times the max reading of the ADC.
-	pub k3: u16,
+	pub k3: Word,
 
 	/// The expected ADC reading for K4, before margins.
 	///
 	/// For predefined maps it's equal to the max reading of the ADC.
-	pub k4: u16,
+	pub k4: Word,
 
 	/// The absolute margin a reading may deviate from the above expected values.
 	/// The default is `3%` of the max reading of the ADC.
-	pub margin: u16,
+	pub margin: Word,
 }
 
-impl KeyMap {
+impl<Word> KeyMap<Word>
+where
+	Word: Copy + Add<Output = Word> + Sub<Output = Word> + Ord,
+{
 	/// Takes an ADC reading and finds whether it's in the expected range of a key.
 	///
 	/// Will be [`None`] when no key is pressed, but also for some simultaneous key combinations.
-	pub const fn key_from_reading(&self, val: u16) -> Option<Key> {
+	pub fn key_from_reading(&self, val: Word) -> Option<Key> {
 		match val {
 			v if v > self.k1 - self.margin && v < self.k1 + self.margin => Some(Key::K1),
 			v if v > self.k2 - self.margin && v < self.k2 + self.margin => Some(Key::K2),
@@ -187,10 +192,26 @@ pub const K2_F: f32 = make_factor!(2000.0, 3000.0, R_DOWN);
 /// See the module documentation [`kc11b04::mapping`][crate::mapping] for details.
 pub const K3_F: f32 = make_factor!(1000.0, 4000.0, R_DOWN);
 
-/// Defines a [`KeyMap`] based on the max reading of the ADC and optional margin factor.<br>
-/// For example `map_from_max!(1023, 0.15)` for a 10bit ADC and 15% margin.
+/// Defines a [`KeyMap`] based on the max reading of the ADC and optional margin factor.
 ///
-/// The margin defaults to `0.03` (3%) if omitted.
+/// The margin defaults to `0.03` (3% of the max parameter) if omitted.
+///
+/// ## Integer type
+///
+/// The macro and [`KeyMap`] take a `Word` generic parameter to support a variety of ADCs.
+///
+/// Keep in mind though this macro always maps the positive range, even when signed integers are used.
+/// As negative voltages are out-of-spec for the KC11B04 module.
+///
+/// ```rust
+/// # use kc11b04::{KeyMap, map_from_max};
+/// /// Signed 11bit map. Meaning 10 bits of resolution in the positive voltage range,
+/// /// so the max `1023` is the same as the 10 bit map.
+/// const SIGNED_11BIT: KeyMap<i16> = map_from_max!(i16, 1023);
+///
+/// /// 24bit map needs a u32 to fit.
+/// const UNSIGNED_24BIT: KeyMap<u32> = map_from_max!(u32, 0xFFFFFF);
+/// ```
 ///
 /// ## Performance note
 ///
@@ -198,30 +219,30 @@ pub const K3_F: f32 = make_factor!(1000.0, 4000.0, R_DOWN);
 /// **declare the result as a constant**, to avoid this FP math at runtime.
 ///
 /// ```rust
-/// use kc11b04::{KeyMap, map_from_max};
-///
+/// # use kc11b04::{KeyMap, map_from_max};
 /// /// 10bit map, but with 15% margin.
-/// const CUSTOM_MAP: KeyMap = map_from_max!(1023, 0.15);
+/// const CUSTOM_MAP: KeyMap<u16> = map_from_max!(u16, 1023, 0.15);
 /// ```
 #[macro_export]
 macro_rules! map_from_max {
-	($max:literal) => {
-		map_from_max!($max, 0.03)
+	($word:ident, $max:literal) => {
+		map_from_max!($word, $max, 0.03)
 	};
-	($max:literal, $margin:literal) => {
+	($word:ident, $max:literal, $margin:literal) => {
 		KeyMap {
-			k1: ($max as f32 * $crate::mapping::K1_F) as u16,
-			k2: ($max as f32 * $crate::mapping::K2_F) as u16,
-			k3: ($max as f32 * $crate::mapping::K3_F) as u16,
+			k1: ($max as f32 * $crate::mapping::K1_F) as $word,
+			k2: ($max as f32 * $crate::mapping::K2_F) as $word,
+			k3: ($max as f32 * $crate::mapping::K3_F) as $word,
 			k4: $max,
-			margin: ($max as f32 * $margin) as u16,
+			margin: ($max as f32 * $margin) as $word,
 		}
 	};
 }
 
 #[test]
 fn read_10bit_samples() {
-	let map = crate::map_from_max!(1023, 0.03);
+	// Use `i16` as it's less commonly used in examples.
+	let map = crate::map_from_max!(i16, 1023, 0.03);
 	assert_eq!(
 		(
 			map.key_from_reading(0),

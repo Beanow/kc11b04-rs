@@ -2,23 +2,27 @@
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-License-Identifier: MIT
 
-use core::marker::PhantomData;
+use core::{
+	marker::PhantomData,
+	ops::{Add, Sub},
+};
 use embedded_hal::adc::{Channel, OneShot};
 
 use crate::{Key, KeyMap};
 
 /// KC11B04 analog keypad driver. Constructed with [`KC11B04::new`].
-pub struct KC11B04<Pin, ADC> {
+pub struct KC11B04<Pin, ADC, Word> {
 	pin: Pin,
-	map: KeyMap,
+	map: KeyMap<Word>,
 	_adc: PhantomData<ADC>,
 }
 
 type Error<Adc, ADC, Word, Pin> = nb::Error<<Adc as OneShot<ADC, Word, Pin>>::Error>;
 
-impl<Pin, ADC> KC11B04<Pin, ADC>
+impl<Pin, ADC, Word> KC11B04<Pin, ADC, Word>
 where
 	Pin: Channel<ADC>,
+	Word: Copy + Add<Output = Word> + Sub<Output = Word> + Ord,
 {
 	/// Create a [`KC11B04`] instance for the given ADC pin / channel and mapping.
 	///
@@ -33,7 +37,7 @@ where
 	/// // providing a map that matches the resolution of your ADC.
 	/// let mut keypad = KC11B04::new(analog_pin, kc11b04::MAP_10BIT);
 	/// ```
-	pub fn new(pin: Pin, map: KeyMap) -> Self
+	pub fn new(pin: Pin, map: KeyMap<Word>) -> Self
 	where
 		Pin: Channel<ADC>,
 	{
@@ -50,9 +54,9 @@ where
 	pub fn key_state<Adc>(
 		&mut self,
 		adc: &mut Adc,
-	) -> Result<Option<Key>, Error<Adc, ADC, u16, Pin>>
+	) -> Result<Option<Key>, Error<Adc, ADC, Word, Pin>>
 	where
-		Adc: OneShot<ADC, u16, Pin>,
+		Adc: OneShot<ADC, Word, Pin>,
 	{
 		let val = adc.read(&mut self.pin)?;
 		Ok(self.map.key_from_reading(val))
