@@ -85,13 +85,22 @@ pub enum Key {
 }
 
 /// [`KeyMap`] for 8bit ADCs with a maximum reading of `255`.
-pub const MAP_8BIT: KeyMap = map_from_max!(255);
+pub const MAP_8BIT: KeyMap<u8> = map_from_max!(u8, 255);
 
 /// [`KeyMap`] for 10bit ADCs with a maximum reading of `1023`.
-pub const MAP_10BIT: KeyMap = map_from_max!(1023);
+pub const MAP_10BIT: KeyMap<u16> = map_from_max!(u16, 1023);
 
 /// [`KeyMap`] for 12bit ADCs with a maximum reading of `4095`.
-pub const MAP_12BIT: KeyMap = map_from_max!(4095);
+pub const MAP_12BIT: KeyMap<u16> = map_from_max!(u16, 4095);
+
+/// [`KeyMap`] for signed 12bit ADCs with a maximum *positive* reading of `2047`.
+pub const MAP_12BIT_SIGNED: KeyMap<i16> = map_from_max!(i16, 2047);
 
 /// [`KeyMap`] for 16bit ADCs with a maximum reading of `65535`.
-pub const MAP_16BIT: KeyMap = map_from_max!(65535);
+pub const MAP_16BIT: KeyMap<u16> = map_from_max!(u16, 65535);
+
+/// [`KeyMap`] for signed 16bit ADCs with a maximum *positive* reading of `32767`.
+pub const MAP_16BIT_SIGNED: KeyMap<i16> = map_from_max!(i16, 32767);
+
+/// [`KeyMap`] for 24bit ADCs with a maximum reading of `16777215`.
+pub const MAP_24BIT: KeyMap<u32> = map_from_max!(u32, 0xFFFFFF);
