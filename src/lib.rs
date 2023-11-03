@@ -49,10 +49,10 @@
 //! }
 //! ```
 //!
-//! # MSRV & Stability
+//! # MSRV policy
 //!
-//! This crate compiles on stable Rust `1.60` and up. It _might_ still work on older rust versions,
-//! but this isn't ensured. Upgrading the MSRV is considered SemVer breaking.
+//! Upgrading the MSRV is considered SemVer breaking.
+//! The MSRV will be set in `package.rust-version`.
 //!
 #![cfg_attr(
 	feature = "doc-images",

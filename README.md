@@ -1,9 +1,10 @@
-# KC11B04 Driver &emsp; [![Latest Version]][crates.io] [![Docs Badge]][docs]
+# KC11B04 Driver &emsp; [![Latest Version]][crates.io] [![Docs Badge]][docs] ![Rust Version: 1.60.0][MSRV badge]
 
 [Latest Version]: https://img.shields.io/crates/v/kc11b04.svg
 [crates.io]: https://crates.io/crates/kc11b04
 [Docs Badge]: https://docs.rs/kc11b04/badge.svg
 [docs]: https://docs.rs/kc11b04
+[MSRV badge]: https://img.shields.io/badge/rustc-1.60.0-blue.svg
 
 Driver in Rust for the KC11B04 4-button analog keypad.
 
@@ -47,9 +48,9 @@ match keypad
 ```
 
 
-## MSRV & Stability
+## MSRV policy
 
-This crate compiles on stable Rust `1.60` and up. It *might* still work on older rust versions, but this isn’t ensured. Upgrading the MSRV is considered SemVer breaking.
+Upgrading the MSRV is considered SemVer breaking. The MSRV will be set in `package.rust-version`.
 
 
  [__link0]: docs/KC11B04.webp
